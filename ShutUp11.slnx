@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/Çözüm Öğeleri/">
+    <File Path="app.manifest" />
+  </Folder>
+  <Project Path="ShutUp11.csproj" />
+</Solution>

@@ -1,0 +1,283 @@
+﻿<UserControl x:Class="ShutUp11.Views.ProcessesPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="ScrollBarThumbStyle" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="#3A3A3E" CornerRadius="3" Margin="2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="#141416"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="#141416">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollBarThumbStyle}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ThemedScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollContentPresenter Grid.Column="0"/>
+                            <ScrollBar Grid.Column="1"
+                                       x:Name="PART_VerticalScrollBar"
+                                       Style="{StaticResource ScrollBarStyle}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TabBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#9A9A9E"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1A1A1D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#141416">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#0F0F12" BorderBrush="#232327" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="110"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Name"      Foreground="#9A9A9E" Margin="16,0,0,0" VerticalAlignment="Center" FontSize="12" Cursor="Hand" MouseLeftButtonDown="Sort_Name"/>
+                <TextBlock Grid.Column="1" Text="PID"       Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" Cursor="Hand" MouseLeftButtonDown="Sort_Pid"/>
+                <TextBlock Grid.Column="2" Text="CPU"       Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" Cursor="Hand" MouseLeftButtonDown="Sort_Cpu"/>
+                <TextBlock Grid.Column="3" Text="Mem"       Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12" Cursor="Hand" MouseLeftButtonDown="Sort_Mem"/>
+                <TextBlock Grid.Column="4" Text="Threads"   Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12"/>
+                <TextBlock Grid.Column="5" Text="Publisher" Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="12"/>
+                <TextBlock Grid.Column="6" Text="Status"    Foreground="#9A9A9E" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center" FontSize="12"/>
+            </Grid>
+        </Border>
+
+        <ListView x:Name="ProcessList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                  Foreground="#E6E6E6" SelectionMode="Single"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  SelectionChanged="ProcessList_SelectionChanged">
+            <ListView.Template>
+                <ControlTemplate TargetType="ListView">
+                    <ScrollViewer Style="{StaticResource ThemedScrollViewer}" Focusable="False">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListView.Template>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="End Task (Strong)" Click="EndTask_Click"/>
+                    <MenuItem Header="Show in Explorer"  Click="OpenLocation_Click"/>
+                    <MenuItem Header="Copy Path"         Click="CopyPath_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Refresh" Click="Refresh_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="bd" Background="{TemplateBinding Background}" Padding="0,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="110"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}"        Foreground="#E6E6E6" Margin="16,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Pid}"         Foreground="#B0B0B5" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding CpuText}"     Foreground="#FFD93D" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding MemoryText}"  Foreground="#B0B0B5" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding ThreadCount}" Foreground="#B0B0B5" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding Publisher}"   Foreground="#B0B0B5" HorizontalAlignment="Right" Margin="0,0,16,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="{Binding StatusColor}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Status}" Foreground="#B0B0B5" FontSize="12"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="#1A1A1D"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="bd" Property="Background" Value="#1F2A22"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Background="#232327" Height="5"/>
+
+        <Border x:Name="DetailBorder" Grid.Row="3" Background="#0F0F12" BorderBrush="#232327"
+                BorderThickness="0,1,0,0" Height="260" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="38"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#111114" BorderBrush="#232327" BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="DetailTitle" Grid.Column="0"
+                                   Text="Process Detail" Foreground="#00C853"
+                                   FontWeight="SemiBold" VerticalAlignment="Center"
+                                   Margin="14,0,16,0" FontSize="13"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="TabBtnInfo"    Content="Info"          Style="{StaticResource TabBtnStyle}" Click="TabBtn_Click" Tag="Info"/>
+                            <Button x:Name="TabBtnDll"     Content="Modules (DLL)" Style="{StaticResource TabBtnStyle}" Click="TabBtn_Click" Tag="Dll"     Margin="2,0,0,0"/>
+                            <Button x:Name="TabBtnThreads" Content="Threads"       Style="{StaticResource TabBtnStyle}" Click="TabBtn_Click" Tag="Threads"  Margin="2,0,0,0"/>
+                            <Border x:Name="DllModePanel" Visibility="Collapsed" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="1" Background="#232327" Margin="0,6"/>
+                                    <Button x:Name="BtnOwnDlls" Content="App Only" Style="{StaticResource TabBtnStyle}" Click="DllMode_Click" Tag="Own" Margin="8,0,0,0"/>
+                                    <Button x:Name="BtnAllDlls" Content="Show All" Style="{StaticResource TabBtnStyle}" Click="DllMode_Click" Tag="All" Margin="2,0,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <Button Grid.Column="2" Content="x" Click="CloseDetail_Click" Width="30" Height="30"
+                                HorizontalAlignment="Right" Background="Transparent" Foreground="#9A9A9E"
+                                BorderThickness="0" Cursor="Hand"/>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1">
+                    <ScrollViewer x:Name="PanelInfo" Style="{StaticResource ThemedScrollViewer}"
+                                  Background="#141416" Visibility="Visible">
+                        <StackPanel Margin="16">
+                            <TextBlock x:Name="InfoPath"      Foreground="#E6E6E6" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="InfoCmd"       Foreground="#9A9A9E" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                            <TextBlock x:Name="InfoUser"      Foreground="#9A9A9E" FontSize="11" Margin="0,8,0,0"/>
+                            <TextBlock x:Name="InfoProduct"   Foreground="#9A9A9E" FontSize="11" Margin="0,4,0,0"/>
+                            <TextBlock x:Name="InfoVersion"   Foreground="#9A9A9E" FontSize="11" Margin="0,4,0,0"/>
+                            <TextBlock x:Name="InfoPublisher" Foreground="#9A9A9E" FontSize="11" Margin="0,4,0,0"/>
+                            <TextBlock x:Name="InfoSignature" Foreground="#9A9A9E" FontSize="11" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ListView x:Name="ModuleList" Background="#141416" BorderThickness="0"
+                              Foreground="#E6E6E6" Visibility="Collapsed"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ListView.Template>
+                            <ControlTemplate TargetType="ListView">
+                                <ScrollViewer Style="{StaticResource ThemedScrollViewer}" Focusable="False">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListView.Template>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name"      Width="260" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Publisher" Width="220" DisplayMemberBinding="{Binding Publisher}"/>
+                                <GridViewColumn Header="Path"      Width="700" DisplayMemberBinding="{Binding Path}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <ListView x:Name="ThreadList" Background="#141416" BorderThickness="0"
+                              Foreground="#E6E6E6" Visibility="Collapsed"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ListView.Template>
+                            <ControlTemplate TargetType="ListView">
+                                <ScrollViewer Style="{StaticResource ThemedScrollViewer}" Focusable="False">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListView.Template>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="ID"          Width="100" DisplayMemberBinding="{Binding Id}"/>
+                                <GridViewColumn Header="State"       Width="180" DisplayMemberBinding="{Binding State}"/>
+                                <GridViewColumn Header="Wait Reason" Width="300" DisplayMemberBinding="{Binding WaitReason}"/>
+                                <GridViewColumn Header="Priority"    Width="100" DisplayMemberBinding="{Binding Priority}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4" Background="#0F0F12" BorderBrush="#232327" BorderThickness="0,1,0,0" Padding="12,6">
+            <Grid>
+                <TextBlock x:Name="StatusText"       Foreground="#9A9A9E" FontSize="11" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="RefreshIndicator" Foreground="#00C853" FontSize="11" HorizontalAlignment="Right"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

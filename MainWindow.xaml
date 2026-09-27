@@ -1,0 +1,113 @@
+<Window x:Class="ShutUp11.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ShutUp11"
+        Height="720" Width="1180"
+        MinHeight="600" MinWidth="960"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+    <Border Background="#0D0D0F" BorderBrush="#232327" BorderThickness="1" CornerRadius="8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#111114" BorderBrush="#232327" BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0" MouseLeftButtonDown="TitleBar_MouseDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,0,12,0">
+                        <Border Width="24" Height="24" CornerRadius="4" Background="#1F1F22" VerticalAlignment="Center">
+                            <Image Source="logo/logo.png" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="ShutUp11" Foreground="#E6E6E6" FontWeight="SemiBold"
+                                   FontSize="13" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+
+                    <Menu Grid.Column="1" Background="Transparent" Foreground="#C0C0C5"
+                          VerticalAlignment="Center">
+                        <MenuItem Header="Dosya" Background="#111114" Foreground="#E6E6E6">
+                            <MenuItem Header="Çıkış" Click="MenuExit_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="İşlemler" Background="#111114" Foreground="#E6E6E6">
+                            <MenuItem Header="Önerilen Ayarları Uygula (Tüm Sekmeler)"
+                                      Click="MenuApplyRecommended_Click"/>
+                            <Separator/>
+                            <MenuItem Header="Yedek Dışa Aktar (JSON)" Click="MenuExportBackup_Click"/>
+                            <Separator/>
+                            <MenuItem Header="Tümünü Geri Al" Click="MenuRevertAll_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="Araçlar" Background="#111114" Foreground="#E6E6E6">
+                            <MenuItem Header="Kayıt Defteri Düzenleyicisi" Click="MenuRegedit_Click"/>
+                            <MenuItem Header="Servisler" Click="MenuServices_Click"/>
+                            <MenuItem Header="Görev Yöneticisi" Click="MenuTaskManager_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="Yardım" Background="#111114" Foreground="#E6E6E6">
+                            <MenuItem Header="Hakkında" Click="Help_Click"/>
+                            <MenuItem Header="GitHub'da Görüntüle" Click="MenuGitHub_Click"/>
+                            <MenuItem Header="Belgelendirme" Click="MenuDocs_Click"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <Border Grid.Column="3" Background="#1A1A1D" CornerRadius="4"
+                            Width="340" Height="28" Margin="0,0,8,0" VerticalAlignment="Center">
+                        <Grid>
+                            <TextBox x:Name="SearchBox" Background="Transparent" BorderThickness="0"
+                                     Foreground="#E6E6E6" CaretBrush="#E6E6E6"
+                                     VerticalContentAlignment="Center" Padding="10,0,28,0"
+                                     TextChanged="SearchBox_TextChanged"/>
+                            <TextBlock x:Name="SearchPlaceholder" Text="Ara..." Foreground="#5A5A5E"
+                                       VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False"/>
+                            <TextBlock Text="🔍" Foreground="#9A9A9E" HorizontalAlignment="Right"
+                                       VerticalAlignment="Center" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Column="4" Orientation="Horizontal">
+                        <Button Content="?" Style="{StaticResource WindowButtonStyle}" Click="Help_Click"/>
+                        <Button Content="—" Style="{StaticResource WindowButtonStyle}" Click="Minimize_Click"/>
+                        <Button Content="□" Style="{StaticResource WindowButtonStyle}" Click="Maximize_Click"/>
+                        <Button Content="✕" Style="{StaticResource WindowButtonStyle}" Click="Close_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#0F0F12" BorderBrush="#232327" BorderThickness="0,0,1,0">
+                    <StackPanel Margin="12,16">
+                        <Button x:Name="NavCurrent" Content="Current User" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="Current"/>
+                        <Button x:Name="NavLocal" Content="Local Machine" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="Local" Margin="0,4,0,0"/>
+                        <Button x:Name="NavAI" Content="AI" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="AI" Margin="0,4,0,0"/>
+                        <Button x:Name="NavSecure" Content="Secure Boot" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="Secure" Margin="0,4,0,0"/>
+                        <Border Height="1" Background="#232327" Margin="4,12"/>
+                        <Button x:Name="NavMonitor" Content="System Monitor" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="Monitor" Margin="0,4,0,0"/>
+                        <Button x:Name="NavOptimization" Content="Optimizasyon" Style="{StaticResource NavButtonStyle}"
+                                Click="Nav_Click" Tag="Optimization" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <ContentControl Grid.Column="1" x:Name="ContentHost"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
